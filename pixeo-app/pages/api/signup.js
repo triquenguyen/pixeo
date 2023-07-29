@@ -1,6 +1,6 @@
 import { hash } from 'bcrypt';
 import executeQuery from '../../config/connect-db';
-// import checkUser from '../../libs/checkUser';
+import findUser from '@/libs/findUser';
 
 export default async function handler(req, res) {
 
@@ -10,10 +10,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "Please fill in all fields" })
   }
 
-  // const results = await checkUser(email);
-  // if (Number(results.size.length) > 0) {
-  //   return res.status(400).json({ message: "User already exists" })
-  // } 
+  var results = await findUser(email);
+
+  if (results.rows[0]) {
+    return res.status(400).json({ message: "User already exists" })
+  } 
 
   if (password !== confirmPass) {
     return res.status(400).json({ message: "Passwords don't match" })
@@ -22,7 +23,7 @@ export default async function handler(req, res) {
   const hashedPassword = await hash(password, 10);
 
   try {
-    const results = await executeQuery({
+    var results = await executeQuery({
       query: 'INSERT INTO user (firstname, lastname, email, password) VALUES (?, ?, ?, ?)',
       values: [firstName, lastName, email, hashedPassword]
     });
