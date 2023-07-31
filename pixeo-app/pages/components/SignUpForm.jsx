@@ -29,8 +29,8 @@ export default function SignUpForm() {
       console.log("Form submitted", res)
       if (res.status === 200) {
         alert("Sign up successful, please login to continue")
-        // setForm(initialForm)
-        // Router.push('/login')
+        setForm(initialForm)
+        Router.push('/login')
       } 
     } catch (error) {
       alert(error.response.data.message)
@@ -56,14 +56,14 @@ export default function SignUpForm() {
             value={form.lastName}
             onChange={handleChange}
             placeholder="Last Name"
-            className="bg-[rgba(200,200,200,0.2)] w-[170px] border-[2px] border-[rgba(0,0,0,0)] focus:ring-[#69C9D0] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2" />
+            className="bg-[rgba(200,200,200,0.2)] w-[170px] border-[2px] border-[rgba(0,0,0,0)] focus:ring-[#5c5c5c] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2" />
         </div>
         <input
           type="email"
           name="email"
           value={form.email}
           onChange={handleChange}
-          placeholder="Email" className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c] focus:border-[#69C9D0] focus:outline-none text-sm rounded-lg block p-2 mt-2" />
+          placeholder="Email" className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2" />
 
         <input
           type="password"
