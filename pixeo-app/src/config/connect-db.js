@@ -1,16 +1,14 @@
-import { connect } from '@planetscale/database'
+import { connect } from "@planetscale/database";
 
-const config = {
-
-}
+const config = {};
 
 export default async function executeQuery({ query, values }) {
-  const conn = await connect(config)
+  const conn = await connect(config);
 
   try {
-    const results = await conn.execute(query, values)
-    return results
-  }  catch (error) {
-    console.log(error)
+    const results = await conn.execute(query, values);
+    return results;
+  } catch (error) {
+    console.log(error);
   }
 }

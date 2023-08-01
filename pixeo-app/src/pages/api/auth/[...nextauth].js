@@ -1,8 +1,6 @@
+import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import axios from "axios";
-import executeQuery from "@/config/connect-db";
-import bcrypt from "bcrypt";
 import findUser from "@/lib/findUser";
 
 export default NextAuth({
@@ -34,7 +32,7 @@ export default NextAuth({
 
         const passwordMatch = await bcrypt.compare(
           password,
-          userExists.password
+          userExists.password,
         );
 
         if (!passwordMatch) {
@@ -56,7 +54,7 @@ export default NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
