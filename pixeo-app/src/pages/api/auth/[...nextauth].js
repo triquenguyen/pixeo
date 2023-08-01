@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import findUser from "@/lib/findUser";
+import { findByEmail } from "@/lib/user";
 
 export default NextAuth({
   providers: [
@@ -22,7 +22,7 @@ export default NextAuth({
           throw new Error("Email and password are required");
         }
 
-        const results = await findUser(email);
+        const results = await findByEmail(email);
 
         const userExists = results.rows[0];
 

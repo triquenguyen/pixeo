@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import executeQuery from "@/config/connect-db";
+import { executeQuery } from "@/config/db";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -2,13 +2,15 @@ import Link from "next/link";
 import Router from "next/router";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import Button from "@/components/inputs/button";
+import Input from "@/components/inputs/input";
 
 const initialForm = {
   email: "",
   password: "",
 };
 
-export default function LogInForm({ callbackUrl = "/homepage" }) {
+export default function Form({ callbackUrl = "/homepage" }) {
   const [form, setForm] = useState(initialForm);
 
   const handleChange = (e) => {
@@ -25,50 +27,35 @@ export default function LogInForm({ callbackUrl = "/homepage" }) {
       password: form.password,
     });
 
-    if (res.ok) {
-      Router.push(callbackUrl);
-    }
+    if (res.ok) Router.push(callbackUrl);
 
-    if (res.error) {
-      alert(res.error);
-    }
-
-    // setForm(initialForm)
+    if (res.error) alert(res.error);
   };
 
   return (
-    <div className="flex flex-col items-center gap-[16px] ">
-      <h1 className="text-[42px] font-bold">Log In</h1>
+    <div className="flex flex-col items-center space-y-8">
+      <h1 className="text-5xl font-bold">Log In</h1>
       <form
-        className="flex flex-col gap-[14px] items-center "
+        className="flex flex-col items-center space-y-4"
         onSubmit={handleSubmit}
       >
-        <input
-          className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c]  focus:outline-none text-sm rounded-lg block p-2 mt-2"
+        <Input
           name="email"
           placeholder="Email"
           type="email"
           value={form.email}
           onChange={handleChange}
         />
-
-        <input
-          className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c]  focus:outline-none text-sm rounded-lg block p-2 mt-2"
+        <Input
           name="password"
           placeholder="Password"
           type="password"
           value={form.password}
           onChange={handleChange}
         />
-
-        <button
-          className="px-3 py-2 bg-[#000] bg-opacity-80 rounded-md text-white w-[25%] hover:bg-opacity-100"
-          type="submit"
-        >
-          Login
-        </button>
-        <p>
-          Not have an account?{" "}
+        <Button type="submit">Login</Button>
+        <p className="text-gray-500 text-sm">
+          Haven&apos;t created an account yet?{" "}
           <Link className="underline underline-offset-2" href="/signup">
             Create an account
           </Link>

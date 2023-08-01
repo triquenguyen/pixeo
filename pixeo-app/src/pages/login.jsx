@@ -1,15 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import LogInForm from "./components/LogInForm";
+import Form from "../components/login/form";
 
 export default function Login() {
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="py-10 px-8 border-2 border-black rounded-xl z-[1] flex items-center justify-center flex-col">
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="p-8 w-full max-w-sm border-gray-200 border shadow-lg rounded-xl space-y-8 flex items-center justify-center flex-col">
         <Link href="/">
           <Image alt="logo" height={50} src="/pixeo.svg" width={200} />
         </Link>
-        <LogInForm />
+        <Form />
       </div>
     </div>
   );

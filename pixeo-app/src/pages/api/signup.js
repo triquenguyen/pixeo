@@ -1,6 +1,6 @@
 import { hash } from "bcrypt";
-import executeQuery from "../../config/connect-db";
-import findUser from "@/lib/findUser";
+import { executeQuery } from "../../config/db";
+import { findByEmail } from "@/lib/user";
 
 export default async function handler(req, res) {
   const { firstName, lastName, email, password, confirmPass } = await req.body;
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "Please fill in all fields" });
   }
 
-  const existingUser = await findUser(email);
+  const existingUser = await findByEmail(email);
 
   if (existingUser.rows[0])
     return res.status(400).json({ message: "User already exists" });
