@@ -11,13 +11,16 @@
   },
   "dependencies": {
     "@planetscale/database": "^1.10.0",
+    "@reduxjs/toolkit": "^1.9.5",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
+    "framer-motion": "^10.15.0",
     "next": "13.4.12",
     "next-auth": "^4.22.3",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-redux": "^8.1.2"
   },
   "devDependencies": {
     "@types/node": "20.4.5",

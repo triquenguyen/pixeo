@@ -1,21 +1,9 @@
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { executeQuery } from "@/config/db";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const results = await executeQuery({
-      query: `SELECT * FROM user WHERE email = ?`,
-      values: ["test@gmail.com"],
-    });
-
-    console.log(results);
-  };
-
   return (
     <main className={`flex gap-8 ${inter.className}`}>
       <Link
@@ -31,7 +19,6 @@ export default function Home() {
         Log In
       </Link>
 
-      <button onClick={handleSubmit}> click me</button>
     </main>
   );
 }

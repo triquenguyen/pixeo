@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { findByEmail } from "@/lib/user";
+import { findByEmail } from "../../../lib/user";
 
 export default NextAuth({
   providers: [

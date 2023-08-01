@@ -1,6 +1,8 @@
-import "@/styles/globals.css";
+import "../styles/globals.css";
 
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
+import { Provider } from 'react-redux'
+import { store } from '../lib/store'
 
 export default function App({
   Component,
@@ -8,7 +10,9 @@ export default function App({
 }) {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <Provider store={store}>
+        <Component {...pageProps} />
+      </Provider>
     </SessionProvider>
   );
 }
