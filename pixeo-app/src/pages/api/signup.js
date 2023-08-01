@@ -1,11 +1,11 @@
 import { hash } from "bcrypt";
 import { executeQuery } from "../../config/db";
-import { findByEmail } from "@/lib/user";
+import { findByEmail } from "../../lib/user";
 
 export default async function handler(req, res) {
-  const { firstName, lastName, email, password, confirmPass } = await req.body;
+  const { firstName, lastName, email, password, confirmPassword } = await req.body;
 
-  if (!firstName || !lastName || !email || !password || !confirmPass) {
+  if (!firstName || !lastName || !email || !password || !confirmPassword) {
     return res.status(400).json({ message: "Please fill in all fields" });
   }
 
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   if (existingUser.rows[0])
     return res.status(400).json({ message: "User already exists" });
 
-  if (password !== confirmPass)
+  if (password !== confirmPassword)
     return res.status(400).json({ message: "Passwords don't match" });
 
   const hashedPassword = await hash(password, 10);
