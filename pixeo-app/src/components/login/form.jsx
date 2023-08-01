@@ -2,8 +2,8 @@ import Link from "next/link";
 import Router from "next/router";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import Button from "@/components/inputs/button";
-import Input from "@/components/inputs/input";
+import Button from "../inputs/button";
+import Input from "../inputs/input";
 
 const initialForm = {
   email: "",

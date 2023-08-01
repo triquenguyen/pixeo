@@ -1,8 +1,8 @@
 import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
-import Button from "@/components/inputs/button";
-import Input from "@/components/inputs/input";
+import Button from "../inputs/button";
+import Input from "../inputs/input";
 
 const initialForm = {
   email: "",

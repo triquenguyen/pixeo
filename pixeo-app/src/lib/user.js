@@ -1,4 +1,4 @@
-import { executeQuery } from "../../config/db";
+import { executeQuery } from "../config/db";
 
 export const findByEmail = async (email) => {
   return executeQuery({
