@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Button from "../inputs/button";
 import Input from "../inputs/input";
+import Router from "next/router";
 
 const initialForm = {
   email: "",
@@ -27,6 +28,9 @@ export default function Form() {
       if (res.status === 200) {
         alert("Sign up successful, please login to continue");
       }
+
+      setForm(initialForm);
+      Router.push("/login");
     } catch (error) {
       alert(error.response.data.message);
     }
