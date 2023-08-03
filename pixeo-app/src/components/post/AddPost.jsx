@@ -10,7 +10,7 @@ const initialPost = {
   title: "",
   body: "",
   userId: "",
-  photo: "",
+  photo: null,
 }
 
 const dropIn = {
@@ -35,24 +35,30 @@ export default function AddPostBtn({ handleClose, id }) {
   const [post, setPost] = useState(initialPost)
   const [preview, setPreview] = useState('')
   const [photo, setPhoto] = useState(null)
+  const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
 
   const closeAddPost = () => { dispatch(setShowAddPost(false)) }
 
   useEffect(() => {
-      setPost({ 
-        ...post, 
-        userId: Number(id),
-        photo: preview
-      })
-  }, [post, id, preview])
+    setPost({
+      ...post,
+      userId: Number(id),
+      photo: preview
+    })
+
+    return () => {
+      setLoading(false)
+    }
+  }, [post, id, preview, loading])
 
   const handleChange = (e) => {
     setPost({
       ...post,
       [e.target.name]: e.target.value,
     })
-    
+
+    console.log(post)
   }
 
   const handleImageChange = (e) => {
@@ -60,18 +66,18 @@ export default function AddPostBtn({ handleClose, id }) {
 
     setPreview(URL.createObjectURL(file))
 
-  }
+    // const reader = new FileReader();
+    // reader.onload = () => {
+    //   const blob = new Blob([reader.result], { type: file.type });
+    //   // setPost({
+    //   //   ...post,
+    //   //   photo: URL.createObjectURL(blob),
+    //   // });
 
-  // // Read the selected file as a Blob
-  // const reader = new FileReader();
-  // reader.onload = () => {
-  //   const blob = new Blob([reader.result], { type: file.type });
-  //   setPost({
-  //     ...post,
-  //     photo: URL.createObjectURL(blob),
-  //   });
-  // };
-  // reader.readAsArrayBuffer(file);
+    //   setPreview(URL.createObjectURL(blob))
+    // };
+    // reader.readAsArrayBuffer(file);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,7 +133,7 @@ export default function AddPostBtn({ handleClose, id }) {
                 onChange={handleImageChange}
               />
             </div>
-            {post.photo && <Image src={post.photo} width={300} height={300} alt="post photo" />}
+            {preview && <Image src={preview} width={300} height={300} alt="post photo" />}
           </div>
           <button type="submit" className="px-3 py-2 bg-[#000] rounded-md text-white w-[25%]">Post</button>
         </form>
