@@ -8,7 +8,9 @@ import { setShowAddPost } from '../redux/showAddPostSlice';
 
 import Navbar from '../components/util/Navbar';
 import AddPost from '../components/post/AddPost';
+import PostCard from '../components/post/PostCard';
 import axios from 'axios';
+import PostFeed from '../components/post/PostFeed';
 
 export default function HomePage({ firstName, lastName }) {
   const showAddPost = useSelector((state) => state.showAddPost.showAddPost);
@@ -16,31 +18,6 @@ export default function HomePage({ firstName, lastName }) {
   const dispatch = useDispatch();
   const closeAddPost = () => { dispatch(setShowAddPost(false)) }
 
-  const [posts, setPosts] = useState([])
-  const [preview, setPreview] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await axios.get('/api/posts')
-      setPosts(res.data.rows)
-    }
-
-    if (loading) {
-      fetchPosts()
-
-      for (let i = 0; i < posts.length; i++) {
-        posts[i].photo = URL.createObjectURL(posts[i].photo)
-        console.log(posts[i].photo)
-      }
-    }
-
-    console.log(posts)
-
-    return () => {
-      setLoading(false)
-    }
-  }, [posts, loading])
 
   const { data: session, status } = useSession()
 
@@ -54,27 +31,13 @@ export default function HomePage({ firstName, lastName }) {
     )
   }
 
-  if (loading) {
-    return (
-      <h1>Loading...</h1>
-    )
-  }
-
   return (
     <div className="px-24 py-4">
       <Navbar firstName={firstName} lastName={lastName} />
       <h1>This is the Homepage</h1>
       <button onClick={handleSignout}>Sign Out</button>
 
-      <div>
-        {posts.map((post) => (
-          <div key={post.id}>
-            <h1>{post.title}</h1>
-            <p>{post.body}</p>
-            <Image src={post.photo} width={500} height={500} />
-          </div>
-        ))}
-      </div>
+      <PostFeed firstName={firstName} lastName={lastName} />
 
       {showAddPost && <AddPost showAddPost={showAddPost} handleClose={closeAddPost} id={session.user.id} />}
     </div>
