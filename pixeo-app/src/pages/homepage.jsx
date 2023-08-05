@@ -2,21 +2,24 @@ import { useSession, signOut, getSession, GetSessionParams } from 'next-auth/rea
 import { useEffect, useState } from 'react';
 import { executeQuery } from '../config/db';
 import Image from 'next/image';
+import axios from 'axios';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setShowAddPost } from '../redux/showAddPostSlice';
+import { setShowProfile } from '../redux/showProfileSlice';
 
 import Navbar from '../components/util/Navbar';
 import AddPost from '../components/post/AddPost';
-import PostCard from '../components/post/PostCard';
-import axios from 'axios';
 import PostFeed from '../components/post/PostFeed';
+import Profile from '../components/user/Profile';
 
 export default function HomePage({ firstName, lastName }) {
-  const showAddPost = useSelector((state) => state.showAddPost.showAddPost);
+  const showAddPost = useSelector((state) => state.showAddPost.showAddPost)
+  const showProfile = useSelector((state) => state.showProfile.showProfile)
 
   const dispatch = useDispatch();
   const closeAddPost = () => { dispatch(setShowAddPost(false)) }
+  const closeProfile = () => { dispatch(setShowProfile(false)) }
 
 
   const { data: session, status } = useSession()
@@ -40,6 +43,7 @@ export default function HomePage({ firstName, lastName }) {
       <PostFeed firstName={firstName} lastName={lastName} />
 
       {showAddPost && <AddPost showAddPost={showAddPost} handleClose={closeAddPost} id={session.user.id} />}
+      {showProfile && <Profile showProfile={showProfile} handleClose={closeProfile} id={session.user.id} />}
     </div>
   )
 }
