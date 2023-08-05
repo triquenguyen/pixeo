@@ -36,7 +36,7 @@ export default function PostFeed({ firstName, lastName }) {
   }
 
   return (
-    <div>
+    <div className='flex flex-col space-y-16 items-center'>
       {posts.map((post) => (
         <PostCard key={post.id} post={post} firstName={firstName} lastName={lastName} />
       ))}

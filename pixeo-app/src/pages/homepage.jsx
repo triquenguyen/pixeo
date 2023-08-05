@@ -24,10 +24,6 @@ export default function HomePage({ firstName, lastName }) {
 
   const { data: session, status } = useSession()
 
-  const handleSignout = () => {
-    signOut({ redirect: true, callbackUrl: '/' })
-  }
-
   if (!session) {
     return (
       <h1>You gotta login {status}</h1>
@@ -35,10 +31,9 @@ export default function HomePage({ firstName, lastName }) {
   }
 
   return (
-    <div className="px-24 py-4">
+    <div className="px-32 py-4">
       <Navbar firstName={firstName} lastName={lastName} />
       <h1>This is the Homepage</h1>
-      <button onClick={handleSignout}>Sign Out</button>
 
       <PostFeed firstName={firstName} lastName={lastName} />
 

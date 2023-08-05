@@ -68,7 +68,7 @@ export default function PostCard({ post, firstName, lastName }) {
 
 
   return (
-    <div className="border-2 mx-24 my-12 rounded-xl border-black">
+    <div className="border-2 w-[640px] rounded-xl border-black">
       <div className="p-4 border-b-2">
         <div className="flex items-center gap-2">
           <Image src="../../user-circle.svg" width={30} height={50} alt="User Photo" />

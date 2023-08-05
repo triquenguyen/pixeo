@@ -1,7 +1,7 @@
 import { connect } from "@planetscale/database";
 
 const config = {
-
+  
 };
 
 export async function executeQuery({ query, values }) {

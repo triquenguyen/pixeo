@@ -2,8 +2,10 @@ import { motion } from 'framer-motion'
 import Backdrop from "../util/Backdrop";
 import Image from "next/image";
 import { useState, useEffect, use } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
+import Input from '../inputs/input';
+import Button from '../inputs/button';
 
 const dropIn = {
   hidden: { y: "-100vh", opacity: 0 },
@@ -40,6 +42,18 @@ export default function Profile({ handleClose, }) {
     console.log("haha")
   }
 
+  const handleChange = (e) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value })
+  }
+
+  const handleImageChange = (e) => {
+    setProfile({ ...profile, photo: e.target.files[0] })
+  }
+
+  const handleSignout = () => {
+    signOut({ redirect: true, callbackUrl: '/' })
+  }
+
   useEffect(() => {
     const getProfile = async () => {
       const res = await axios.get(`/api/profile/${session.user.id}`)
@@ -71,32 +85,56 @@ export default function Profile({ handleClose, }) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-[14px] items-center">
           <div className="flex gap-8 items-center">
             <div className="flex flex-col gap-[14px]">
-              <input
-                type="text"
-                name="firstName"
-                value={profile.firstName}
-                // onChange={handleChange}
-                placeholder={profile.firstName} className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2" />
+              <div className="flex space-x-4">
+                <Input
+                  name="firstName"
+                  placeholder="First Name"
+                  type="text"
+                  value={profile.firstName}
+                  onChange={handleChange}
+                />
 
-              {/* <textarea
+                <Input
+                  name="lastName"
+                  placeholder="Last Name"
+                  type="text"
+                  value={profile.lastName}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <Input
+                name="bio"
+                placeholder="Bio"
                 type="text"
-                name="body"
-                value={post.body}
+                value={profile.bio}
                 onChange={handleChange}
-                placeholder="Body" className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2"
               />
 
-              <input
+              <Input
+                name="location"
+                placeholder="Location"
+                type="text"
+                value={profile.location}
+                onChange={handleChange}
+              />
+
+              <Input
                 type="file"
                 name="photo"
-                value={photo}
+                value={profile.photo}
                 onChange={handleImageChange}
-              /> */}
+              />
             </div>
             {/* {preview && <Image src={preview} width={300} height={300} alt="post photo" />} */}
           </div>
-          <button type="submit" className="px-3 py-2 bg-[#000] rounded-md text-white w-[25%]">Post</button>
+          <div className='flex space-x-4'>
+            <Button type="submit">Update</Button>
+            <Button onClick={handleSignout} className="px-3 py-2 bg-white border-2 rounded-md w-32 hover:border-black transition">Sign Out</Button>
+          </div>
         </form>
+
+
       </motion.div>
     </Backdrop>
   )
