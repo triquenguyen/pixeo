@@ -12,6 +12,7 @@ export default function PostCard({ post, firstName, lastName }) {
   const [follows, setFollows] = useState([])
   const [isFollowing, setIsFollowing] = useState(false)
   const [isYourPost, setIsYourPost] = useState(false)
+  const [image, setImage] = useState('')
 
   useEffect(() => {
     const fetchInterests = async () => {
@@ -22,7 +23,7 @@ export default function PostCard({ post, firstName, lastName }) {
       setInterests(results.rows)
 
       for (let i = 0; i < results.rows.length; i++) {
-        if (results.rows[i].post_id === post.id && results.rows[i].user_id === session.user.id) {
+        if (results.rows[i].post_id === post.post_id && results.rows[i].user_id === session.user.id) {
           setIsInterested(true)
         }
       }
@@ -53,7 +54,7 @@ export default function PostCard({ post, firstName, lastName }) {
     const countInterests = () => {
       let count = 0
       for (let i = 0; i < interests.length; i++) {
-        if (interests[i].post_id === post.id) {
+        if (interests[i].post_id === post.post_id) {
           count++
         }
       }
@@ -62,12 +63,32 @@ export default function PostCard({ post, firstName, lastName }) {
     countInterests()
   }, [interests])
 
+  useEffect(() => {
+    const fetchImage = async () => {
+      const results = await executeQuery({
+        query: `SELECT photo FROM post WHERE id = ?`,
+        values: [post.post_id]
+      })
+
+      const photoData = results.rows[0].photo; 
+      const blobData = new Blob([photoData], { type: 'image/jpeg' }); 
+      const reader = new FileReader();
+      reader.readAsDataURL(blobData);
+      reader.onload = () => {
+        setImage(reader.result);
+      };
+
+      console.log(results.rows[0].photo)
+    };
+    fetchImage();
+  }, []);
+
   const handleInterest = async (e) => {
     e.preventDefault()
     setIsInterested(true)
     const results = await executeQuery({
       query: `INSERT INTO interest (post_id, user_id) VALUES (?, ?)`,
-      values: [post.id, session.user.id,]
+      values: [post.post_id, session.user.id,]
     })
   }
 
@@ -75,7 +96,7 @@ export default function PostCard({ post, firstName, lastName }) {
     e.preventDefault()
     const results = await executeQuery({
       query: `DELETE FROM interest WHERE post_id = ? AND user_id = ?`,
-      values: [post.id, session.user.id]
+      values: [post.post_id, session.user.id]
     })
     setIsInterested(false)
   }
@@ -119,13 +140,13 @@ export default function PostCard({ post, firstName, lastName }) {
                 </button>
               )
             ) : (<></>)}
-            
+
           </div>
         </div>
       </div>
       <div>
         <div className="flex flex-col items-center">
-          <Image src="/image.png" width={500} height={500} />
+          <Image src='/image.png' width={500} height={500} alt="Post photo" />
         </div>
         <div className="flex items-center p-4 border-t-2 ">
           <div className="mr-auto">
@@ -135,7 +156,7 @@ export default function PostCard({ post, firstName, lastName }) {
           <div>
             {isInterested ? (
               <button onClick={handleUnInterest}>
-                <Image src="/interested.png" width={25} height={25} />
+                <Image src="/interested.png" width={25} height={25} alt="interested" />
                 <span>{interestCount}</span>
               </button>
             ) : (

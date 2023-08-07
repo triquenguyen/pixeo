@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion'
 import Backdrop from "../util/Backdrop";
 import Image from "next/image";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 import Input from '../inputs/input';
 import Button from '../inputs/button';
+import { useDispatch } from 'react-redux';
+import { setShowProfile } from '../../redux/showProfileSlice';
 
 const dropIn = {
   hidden: { y: "-100vh", opacity: 0 },
@@ -26,6 +28,7 @@ const dropIn = {
 }
 
 export default function Profile({ handleClose, }) {
+  const dispatch = useDispatch()
   const { data: session, status } = useSession()
   const [preview, setPreview] = useState('')
   const [photo, setPhoto] = useState(null)
@@ -39,17 +42,20 @@ export default function Profile({ handleClose, }) {
     email: "",
   })
 
-  // const closeProfile = () => { dispatch(setShowProfile(false)) }
+  const closeProfile = () => { dispatch(setShowProfile(false)) }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     const res = await axios.put(`/api/profile/${session.user.id}`, profile)
 
+    console.log(profile)
+
     if (res.status === 200) {
       console.log(res.data)
     }
 
+    closeProfile()
   }
 
   const handleChange = (e) => {

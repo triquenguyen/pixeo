@@ -17,13 +17,11 @@ export default function PostFeed({ firstName, lastName }) {
     if (loading) {
       fetchPosts()
 
-      for (let i = 0; i < posts.length; i++) {
-        posts[i].post_photo = URL.createObjectURL(posts[i].post_photo)
-        console.log(posts[i].post_photo)
-      }
+      // for (let i = 0; i < posts.length; i++) {
+      //   posts[i].post_photo = URL.createObjectURL(posts[i].post_photo)
+      //   console.log(posts[i].post_photo)
+      // }
     }
-
-    console.log(posts)
 
     return () => {
       setLoading(false)

@@ -65,19 +65,19 @@ export default function AddPostBtn({ handleClose, id }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
-    setPreview(URL.createObjectURL(file))
+    // setPreview(URL.createObjectURL(file))
 
-    // const reader = new FileReader();
-    // reader.onload = () => {
-    //   const blob = new Blob([reader.result], { type: file.type });
-    //   // setPost({
-    //   //   ...post,
-    //   //   photo: URL.createObjectURL(blob),
-    //   // });
+    const reader = new FileReader();
+    reader.onload = () => {
+      const blob = new Blob([reader.result], { type: file.type });
+      // setPost({
+      //   ...post,
+      //   photo: URL.createObjectURL(blob),
+      // });
 
-    //   setPreview(URL.createObjectURL(blob))
-    // };
-    // reader.readAsArrayBuffer(file);
+      setPreview(URL.createObjectURL(blob))
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   const handleSubmit = async (e) => {

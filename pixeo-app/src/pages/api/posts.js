@@ -1,4 +1,5 @@
 import { executeQuery } from "../../config/db";
+import { addPost, getAllPosts } from "../../lib/user";
 
 export default async function handler(req, res) {
 
@@ -10,24 +11,14 @@ export default async function handler(req, res) {
     }
 
     try {
-      const newPost = await executeQuery({
-        query:
-          "INSERT INTO post (title, body, photo, user_id) VALUES (?, ?, ?, ?)",
-        values: [String(title), String(body), photo, Number(userId)],
-      })
+      const newPost = await addPost({ title, body, userId, photo });
       res.status(200).json(newPost);
     } catch (error) {
       res.status(500).json(error);
     }
   } else if (req.method == "GET") {
     try {
-      const posts = await executeQuery({
-        query: `SELECT post.id AS post_id, post.title, post.body, post.photo AS post_photo,
-                user.id AS user_id, user.firstname, user.lastname, user.email
-                FROM post
-                JOIN user ON post.user_id = user.id;`,
-        values: [],
-      })
+      const posts = await getAllPosts();
       res.status(200).json(posts);
     } catch (error) {
       res.status(500).json(error);
