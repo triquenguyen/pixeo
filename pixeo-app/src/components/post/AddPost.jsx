@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import Input from "../inputs/input";
 
 const initialPost = {
   title: "",
@@ -111,19 +112,20 @@ export default function AddPostBtn({ handleClose, id }) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-[14px] items-center">
           <div className="flex gap-8 items-center">
             <div className="flex flex-col gap-[14px]">
-              <input
-                type="text"
+              <Input
                 name="title"
+                placeholder="Title"
+                type="text"
                 value={post.title}
                 onChange={handleChange}
-                placeholder="Title" className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2" />
+              />
 
-              <textarea
-                type="text"
+              <Input
                 name="body"
+                placeholder="Description"
+                type="text"
                 value={post.body}
                 onChange={handleChange}
-                placeholder="Body" className="bg-[rgba(200,200,200,0.2)] w-[360px] border-[2px] border-[rgba(0,0,0,0)] focus:border-[#5c5c5c] focus:outline-none text-sm rounded-lg block p-2 mt-2"
               />
 
               <input
