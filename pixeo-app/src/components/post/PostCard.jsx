@@ -9,6 +9,9 @@ export default function PostCard({ post, firstName, lastName }) {
   const [isInterested, setIsInterested] = useState(false)
   const [interests, setInterests] = useState([])
   const [interestCount, setInterestCount] = useState(0)
+  const [follows, setFollows] = useState([])
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [isYourPost, setIsYourPost] = useState(false)
 
   useEffect(() => {
     const fetchInterests = async () => {
@@ -25,6 +28,25 @@ export default function PostCard({ post, firstName, lastName }) {
       }
     }
     fetchInterests()
+
+    const fetchFollows = async () => {
+      const results = await executeQuery({
+        query: `SELECT * FROM follow WHERE follower_id = ?`,
+        values: [session.user.id]
+      })
+      setFollows(results.rows)
+
+      for (let i = 0; i < results.rows.length; i++) {
+        if (results.rows[i].follower_id === session.user.id && session.user.id === post.user_id) {
+          setIsYourPost(true)
+        }
+        if (results.rows[i].follower_id === session.user.id && results.rows[i].following_id === post.user_id) {
+          setIsFollowing(true)
+        }
+      }
+    }
+
+    fetchFollows()
   }, [])
 
   useEffect(() => {
@@ -39,14 +61,6 @@ export default function PostCard({ post, firstName, lastName }) {
     }
     countInterests()
   }, [interests])
-
-  const handleClick = async () => {
-    const results = await executeQuery({
-      query: `SELECT * FROM interest WHERE user_id = ?`,
-      values: [session.user.id]
-    })
-    console.log(results.rows)
-  }
 
   const handleInterest = async (e) => {
     e.preventDefault()
@@ -66,13 +80,47 @@ export default function PostCard({ post, firstName, lastName }) {
     setIsInterested(false)
   }
 
+  const handleFollow = async (e) => {
+    e.preventDefault()
+    setIsFollowing(true)
+    const results = await executeQuery({
+      query: `INSERT INTO follow (follower_id, following_id) VALUES (?, ?)`,
+      values: [session.user.id, post.user_id]
+    })
+  }
+
+  const handleUnfollow = async (e) => {
+    e.preventDefault()
+    setIsFollowing(false)
+    const results = await executeQuery({
+      query: `DELETE FROM follow WHERE follower_id = ? AND following_id = ?`,
+      values: [session.user.id, post.user_id]
+    })
+  }
+
 
   return (
     <div className="border-2 w-[640px] rounded-xl border-black">
       <div className="p-4 border-b-2">
-        <div className="flex items-center gap-2">
-          <Image src="../../user-circle.svg" width={30} height={50} alt="User Photo" />
-          <h1>{firstName} {lastName}</h1>
+        <div className="flex">
+          <div className="mr-auto flex items-center gap-2">
+            <Image src="../../user-circle.svg" width={30} height={50} alt="User Photo" />
+            <h1>{firstName} {lastName}</h1>
+          </div>
+          <div>
+            {!isYourPost ? (
+              isFollowing ? (
+                <button onClick={handleUnfollow}>
+                  <Image src="/added.png" width={25} height={25} />
+                </button>
+              ) : (
+                <button onClick={handleFollow}>
+                  <Image src="/add.png" width={25} height={25} />
+                </button>
+              )
+            ) : (<></>)}
+            
+          </div>
         </div>
       </div>
       <div>

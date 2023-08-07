@@ -33,9 +33,8 @@ export default function HomePage({ firstName, lastName }) {
   return (
     <div className="px-32 py-4">
       <Navbar firstName={firstName} lastName={lastName} />
-      <h1>This is the Homepage</h1>
 
-      <PostFeed firstName={firstName} lastName={lastName} />
+      <PostFeed />
 
       {showAddPost && <AddPost showAddPost={showAddPost} handleClose={closeAddPost} id={session.user.id} />}
       {showProfile && <Profile showProfile={showProfile} handleClose={closeProfile} id={session.user.id} />}

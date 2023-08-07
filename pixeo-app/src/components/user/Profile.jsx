@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import Backdrop from "../util/Backdrop";
 import Image from "next/image";
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 import Input from '../inputs/input';
@@ -27,6 +27,8 @@ const dropIn = {
 
 export default function Profile({ handleClose, }) {
   const { data: session, status } = useSession()
+  const [preview, setPreview] = useState('')
+  const [photo, setPhoto] = useState(null)
 
   const [profile, setProfile] = useState({
     firstName: "",
@@ -34,12 +36,20 @@ export default function Profile({ handleClose, }) {
     bio: "",
     photo: "",
     location: "",
+    email: "",
   })
 
-  const closeProfile = () => { dispatch(setShowProfile(false)) }
+  // const closeProfile = () => { dispatch(setShowProfile(false)) }
 
-  const handleSubmit = (e) => {
-    console.log("haha")
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const res = await axios.put(`/api/profile/${session.user.id}`, profile)
+
+    if (res.status === 200) {
+      console.log(res.data)
+    }
+
   }
 
   const handleChange = (e) => {
@@ -47,7 +57,9 @@ export default function Profile({ handleClose, }) {
   }
 
   const handleImageChange = (e) => {
-    setProfile({ ...profile, photo: e.target.files[0] })
+    const file = e.target.files[0];
+
+    setPreview(URL.createObjectURL(file))
   }
 
   const handleSignout = () => {
@@ -64,6 +76,7 @@ export default function Profile({ handleClose, }) {
         bio: res.data.bio,
         photo: res.data.photo,
         location: res.data.location,
+        email: res.data.email,
       })
     }
     getProfile()
@@ -104,6 +117,14 @@ export default function Profile({ handleClose, }) {
               </div>
 
               <Input
+                name="email"
+                placeholder="Email"
+                type="text"
+                value={profile.email}
+                onChange={handleChange}
+              />
+
+              <Input
                 name="bio"
                 placeholder="Bio"
                 type="text"
@@ -122,11 +143,11 @@ export default function Profile({ handleClose, }) {
               <Input
                 type="file"
                 name="photo"
-                value={profile.photo}
+                value={photo}
                 onChange={handleImageChange}
               />
             </div>
-            {/* {preview && <Image src={preview} width={300} height={300} alt="post photo" />} */}
+            {preview && <Image src={preview} width={300} height={300} alt="post photo" className='rounded-2xl'/>}
           </div>
           <div className='flex space-x-4'>
             <Button type="submit">Update</Button>

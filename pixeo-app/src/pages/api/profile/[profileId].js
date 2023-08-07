@@ -1,3 +1,4 @@
+import { m } from "framer-motion"
 import { executeQuery } from "../../../config/db"
 
 export default async function handler(req, res) {
@@ -10,17 +11,19 @@ export default async function handler(req, res) {
     case 'GET':
       const result = await executeQuery({
         query: "SELECT * FROM user WHERE id = ?",
-        values: [6],
+        values: [profileId],
       })
       res.status(200).json(result.rows[0])
 
       break
     case 'PUT':
-      // Update or create data in your database
-      res.status(200).json({ profileId, name: name || `User ${profileId}` })
-      break
-    default:
-      res.setHeader('Allow', ['GET', 'PUT'])
-      res.status(405).end(`Method ${method} Not Allowed`)
+      const { firstname, lastname, email, bio, location } = req.body
+      
+      const updateProfile = await executeQuery({
+        query: "UPDATE user SET firstname = ?, lastname = ?, email = ?, bio = ?, location = ? WHERE id = ?",
+        values: [firstname, lastname, email, bio, location, profileId],
+      })
+
+      res.status(200).json(updateProfile)
   }
 }

@@ -22,7 +22,10 @@ export default async function handler(req, res) {
   } else if (req.method == "GET") {
     try {
       const posts = await executeQuery({
-        query: "SELECT * FROM post",
+        query: `SELECT post.id AS post_id, post.title, post.body, post.photo AS post_photo,
+                user.id AS user_id, user.firstname, user.lastname, user.email
+                FROM post
+                JOIN user ON post.user_id = user.id;`,
         values: [],
       })
       res.status(200).json(posts);

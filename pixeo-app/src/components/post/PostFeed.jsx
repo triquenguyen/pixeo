@@ -11,14 +11,15 @@ export default function PostFeed({ firstName, lastName }) {
     const fetchPosts = async () => {
       const res = await axios.get('/api/posts')
       setPosts(res.data.rows)
+      console.log(res)
     }
 
     if (loading) {
       fetchPosts()
 
       for (let i = 0; i < posts.length; i++) {
-        posts[i].photo = URL.createObjectURL(posts[i].photo)
-        console.log(posts[i].photo)
+        posts[i].post_photo = URL.createObjectURL(posts[i].post_photo)
+        console.log(posts[i].post_photo)
       }
     }
 
@@ -36,9 +37,9 @@ export default function PostFeed({ firstName, lastName }) {
   }
 
   return (
-    <div className='flex flex-col space-y-16 items-center'>
+    <div className='flex flex-col space-y-10 items-center'>
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} firstName={firstName} lastName={lastName} />
+        <PostCard key={post.post_id} post={post} firstName={post.firstname} lastName={post.lastname} />
       ))}
     </div>
   )
