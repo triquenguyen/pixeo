@@ -7,7 +7,8 @@ CREATE TABLE user (
     photo BLOB,
     bio VARCHAR,
     location VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY email_idx (email)
 ) ENGINE=InnoDB;
 
 CREATE TABLE post (
