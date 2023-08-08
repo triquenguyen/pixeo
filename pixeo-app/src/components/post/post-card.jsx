@@ -8,13 +8,12 @@ export default function PostCard({ post }) {
   const [isInterested, setIsInterested] = useState(false);
   const [interests, setInterests] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isYourPost, setIsYourPost] = useState(false);
 
   useEffect(() => {
     const fetchInterests = async () => {
       await executeQuery({
-        query: `SELECT * FROM interest WHERE user_id = ?`,
-        values: [session.user.id],
+        query: `SELECT * FROM interest WHERE user_id = ? AND post_id = ?`,
+        values: [session.user.id, post.post_id],
       }).then((results) => {
         if (results.rows.length > 0) setIsInterested(true);
       });
@@ -32,16 +31,11 @@ export default function PostCard({ post }) {
   useEffect(() => {
     const fetchFollows = async () => {
       const results = await executeQuery({
-        query: `SELECT * FROM follow WHERE follower_id = ?`,
-        values: [session.user.id],
+        query: `SELECT * FROM follow WHERE follower_id = ? AND following_id = ?`,
+        values: [session.user.id, post.user_id],
       });
 
-      for (let i = 0; i < results.rows.length; i++)
-        if (
-          results.rows[i].follower_id === session.user.id &&
-          results.rows[i].following_id === post.user_id
-        )
-          setIsFollowing(true);
+      if (results.rows.length > 0) setIsFollowing(true);
     };
 
     fetchFollows();
@@ -58,38 +52,38 @@ export default function PostCard({ post }) {
 
   const handleInterest = async (e) => {
     e.preventDefault();
-    setIsInterested(true);
     const results = await executeQuery({
       query: `INSERT INTO interest (post_id, user_id) VALUES (?, ?)`,
       values: [post.post_id, session.user.id],
     });
+    setIsInterested(true);
   };
 
   const handleUnInterest = async (e) => {
     e.preventDefault();
-    setIsInterested(false);
     const results = await executeQuery({
       query: `DELETE FROM interest WHERE post_id = ? AND user_id = ?`,
       values: [post.post_id, session.user.id],
     });
+    setIsInterested(false);
   };
 
   const handleFollow = async (e) => {
     e.preventDefault();
-    setIsFollowing(true);
     const results = await executeQuery({
       query: `INSERT INTO follow (follower_id, following_id) VALUES (?, ?)`,
       values: [session.user.id, post.user_id],
     });
+    setIsFollowing(true);
   };
 
   const handleUnfollow = async (e) => {
     e.preventDefault();
-    setIsFollowing(false);
     const results = await executeQuery({
       query: `DELETE FROM follow WHERE follower_id = ? AND following_id = ?`,
       values: [session.user.id, post.user_id],
     });
+    setIsFollowing(false);
   };
 
   return (
@@ -103,7 +97,7 @@ export default function PostCard({ post }) {
             </h1>
           </div>
           <div>
-            {!isYourPost &&
+            {post.user_id !== session.user.id &&
               (isFollowing ? (
                 <button onClick={handleUnfollow}>
                   <Image
