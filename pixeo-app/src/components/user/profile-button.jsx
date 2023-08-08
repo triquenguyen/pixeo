@@ -24,8 +24,9 @@ export default function ProfileButton() {
     >
       <Image
         alt="User Photo"
+        className="rounded-full"
         height={30}
-        src={profile?.profile_photo || "../../user-circle.svg"}
+        src={profile?.photo || "../../user-circle.svg"}
         width={30}
       />
     </motion.div>

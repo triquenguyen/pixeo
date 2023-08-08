@@ -9,7 +9,7 @@ CREATE TABLE user (
     lastname VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    photo BLOB,
+    photo LONGBLOB,
     bio VARCHAR(255),
     location VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -20,7 +20,7 @@ CREATE TABLE post (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     body TEXT NOT NULL,
-    photo BLOB NOT NULL,
+    photo LONGBLOB NOT NULL,
     user_id INT NOT NULL,
     KEY user_id_idx (user_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
