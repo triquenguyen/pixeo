@@ -52,8 +52,13 @@ export default function Profile({ handleClose }) {
       email: profileData.email,
       bio: profileData.bio,
       location: profileData.location,
+      photo: profileData.photo,
     });
   }, [profileData]);
+
+  useEffect(() => {
+    if (profileData.photo) setPreview(profileData.photo);
+  }, []);
 
   const closeProfile = () => {
     dispatch(setShowProfile(false));
@@ -160,9 +165,9 @@ export default function Profile({ handleClose }) {
               <Image
                 alt="Preview"
                 className="rounded-2xl"
-                height={300}
+                height={240}
                 src={preview}
-                width={300}
+                width={240}
               />
             )}
           </div>
