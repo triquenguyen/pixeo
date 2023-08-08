@@ -16,7 +16,7 @@ export default function Home() {
       />
       <div className="px-12 py-10">
         <div className="flex items-center px-4 py-2">
-          <Link className="mr-auto" href="/">
+          <Link className="mr-auto invert" href="/">
             <Image alt="logo" height={37.5} src="/pixeo.svg" width={150} />
           </Link>
           <Link
