@@ -93,10 +93,10 @@ export default function PostCard({ post }) {
           <div className="flex items-center space-x-2">
             <Image
               alt=""
-              className="rounded-full"
-              height={50}
-              src={post.user_photo || "../../user-circle.svg"}
-              width={30}
+              className="rounded-full w-8 h-8"
+              height={32}
+              src={post.user_photo || "/user-circle.svg"}
+              width={32}
             />
             <h1>
               {post.firstname} {post.lastname}
@@ -122,8 +122,14 @@ export default function PostCard({ post }) {
         </div>
       </div>
       <div>
-        <div className="flex flex-col items-center">
-          <img alt="" height={500} src={post.post_photo} width={500} />
+        <div className="flex flex-col items-center w-full">
+          <Image
+            alt=""
+            height={400}
+            objectPosition="center"
+            src={post.post_photo}
+            width={400}
+          />
         </div>
         <div className="flex items-center justify-between p-4 border-t space-x-2">
           <div>

@@ -36,3 +36,12 @@ export default async function handler(req, res) {
       return handleGET(req, res);
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "64mb",
+    },
+    responseLimit: false,
+  },
+};

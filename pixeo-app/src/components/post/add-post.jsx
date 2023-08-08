@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setShowAddPost } from "../../redux/showAddPostSlice";
+import useSWR from "swr";
 import Input from "../inputs/input";
 import Backdrop from "../util/backdrop";
+import { setShowAddPost } from "@/redux/showAddPostSlice";
 
 const initialPost = {
   title: "",
@@ -33,9 +34,10 @@ const dropIn = {
 
 export default function AddPostBtn({ handleClose, id }) {
   const [post, setPost] = useState(initialPost);
-  const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+
+  const { mutate } = useSWR("/api/posts");
 
   const closeAddPost = () => {
     dispatch(setShowAddPost(false));
@@ -53,32 +55,34 @@ export default function AddPostBtn({ handleClose, id }) {
   }, [id, loading]);
 
   const handleChange = (e) => {
-    setPost({
-      ...post,
+    setPost((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
-  const handleImageChange = (e) =>
-    setPreview(URL.createObjectURL(e.target.files[0]));
+  const handleImageChange = (e) => {
+    const photo = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(photo);
+    reader.onloadend = async () => {
+      setPost((prev) => ({
+        ...prev,
+        photo: reader.result,
+      }));
+    };
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const photo = e.target.photo.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(photo);
-      reader.onloadend = async () => {
-        const res = await axios.post("/api/posts", {
-          ...post,
-          photo: reader.result,
-        });
-        if (res.status === 200) {
-          alert("Post added successfully");
-          closeAddPost();
-        }
-      };
+      const res = await axios.post("/api/posts", post);
+      if (res.status === 200) {
+        mutate();
+        alert("Post added successfully");
+        closeAddPost();
+      }
     } catch (err) {
       alert(err.message);
     }
@@ -133,9 +137,12 @@ export default function AddPostBtn({ handleClose, id }) {
                 onChange={handleImageChange}
               />
             </div>
-            {preview && (
-              <Image alt="Preview" height={300} src={preview} width={300} />
-            )}
+            <Image
+              alt="Preview"
+              height={200}
+              src={post.photo || "/pixeo.svg"}
+              width={200}
+            />
           </div>
           <button
             className="px-3 py-2 bg-[#000] rounded-md text-white w-[25%]"

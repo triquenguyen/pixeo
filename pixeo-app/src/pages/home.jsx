@@ -27,7 +27,7 @@ export default function Home() {
   if (status !== "authenticated") return <h1>Loading...</h1>;
 
   return (
-    <div className="px-32 py-4">
+    <div className="max-w-3xl mx-auto py-4">
       <Navbar />
 
       <PostFeed />
