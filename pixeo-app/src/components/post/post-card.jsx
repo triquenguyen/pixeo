@@ -119,12 +119,12 @@ export default function PostCard({ post }) {
         <div className="flex flex-col items-center">
           <img alt="" height={500} src={post.post_photo} width={500} />
         </div>
-        <div className="flex items-center justify-between p-4 border-t-2 ">
+        <div className="flex items-center justify-between p-4 border-t space-x-2">
           <div>
             <h1 className="font-bold">{post.title}</h1>
             <p className="text-gray-500">{post.body}</p>
           </div>
-          <div>
+          <div className="shrink-0">
             {isInterested ? (
               <button onClick={handleUnInterest}>
                 <Image

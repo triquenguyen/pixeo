@@ -10,7 +10,7 @@ CREATE TABLE user (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     photo BLOB,
-    bio VARCHAR(255) NOT NULL,
+    bio VARCHAR(255),
     location VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY email_idx (email)
