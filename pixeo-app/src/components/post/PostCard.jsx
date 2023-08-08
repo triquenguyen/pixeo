@@ -8,11 +8,11 @@ export default function PostCard({ post, firstName, lastName }) {
   const { data: session, status } = useSession()
   const [isInterested, setIsInterested] = useState(false)
   const [interests, setInterests] = useState([])
-  const [interestCount, setInterestCount] = useState(0)
   const [follows, setFollows] = useState([])
   const [isFollowing, setIsFollowing] = useState(false)
   const [isYourPost, setIsYourPost] = useState(false)
   const [image, setImage] = useState('')
+  const [interestCount, setInterestCount] = useState([])
 
   useEffect(() => {
     const fetchInterests = async () => {
@@ -50,38 +50,38 @@ export default function PostCard({ post, firstName, lastName }) {
     fetchFollows()
   }, [])
 
+
+  // useEffect(() => {
+  //   const fetchImage = async () => {
+  //     const results = await executeQuery({
+  //       query: `SELECT photo FROM post WHERE id = ?`,
+  //       values: [post.post_id]
+  //     })
+
+  //     const photoData = results.rows[0].photo; 
+  //     const blobData = new Blob([photoData], { type: 'image/jpeg' }); 
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(blobData);
+  //     reader.onload = () => {
+  //       setImage(reader.result);
+  //     };
+
+  //     console.log(results.rows[0].photo)
+  //   };
+  //   fetchImage();
+  // }, []);
+
   useEffect(() => {
-    const countInterests = () => {
-      let count = 0
-      for (let i = 0; i < interests.length; i++) {
-        if (interests[i].post_id === post.post_id) {
-          count++
-        }
-      }
-      setInterestCount(count)
+    const countInterests = async () => {
+      const results = await executeQuery({
+        query: `SELECT * FROM interest WHERE post_id = ? ORDER BY post_id DESC`,
+        values: [post.post_id]
+      })
+      console.log(results.rows[0])
+      setInterestCount(results.rows[0])
     }
     countInterests()
   }, [interests])
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      const results = await executeQuery({
-        query: `SELECT photo FROM post WHERE id = ?`,
-        values: [post.post_id]
-      })
-
-      const photoData = results.rows[0].photo; 
-      const blobData = new Blob([photoData], { type: 'image/jpeg' }); 
-      const reader = new FileReader();
-      reader.readAsDataURL(blobData);
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-
-      console.log(results.rows[0].photo)
-    };
-    fetchImage();
-  }, []);
 
   const handleInterest = async (e) => {
     e.preventDefault()
@@ -140,13 +140,12 @@ export default function PostCard({ post, firstName, lastName }) {
                 </button>
               )
             ) : (<></>)}
-
           </div>
         </div>
       </div>
       <div>
         <div className="flex flex-col items-center">
-          <Image src='/image.png' width={500} height={500} alt="Post photo" />
+          <Image src={post.post_photo} width={500} height={500} alt="Post photo" />
         </div>
         <div className="flex items-center p-4 border-t-2 ">
           <div className="mr-auto">
