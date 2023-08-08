@@ -9,7 +9,7 @@ import Navbar from "@/components/util/navbar";
 import { setShowAddPost } from "@/redux/showAddPostSlice";
 import { setShowProfile } from "@/redux/showProfileSlice";
 
-export default function HomePage() {
+export default function Home() {
   const router = useRouter();
   const showAddPost = useSelector((state) => state.showAddPost.showAddPost);
   const showProfile = useSelector((state) => state.showProfile.showProfile);
@@ -50,4 +50,4 @@ export default function HomePage() {
   );
 }
 
-HomePage.auth = true;
+Home.auth = true;

@@ -12,18 +12,19 @@ export default function PostCard({ post }) {
 
   useEffect(() => {
     const fetchInterests = async () => {
-      const results = await executeQuery({
+      await executeQuery({
         query: `SELECT * FROM interest WHERE user_id = ?`,
         values: [session.user.id],
+      }).then((results) => {
+        if (results.rows.length > 0) setIsInterested(true);
       });
-      setInterests(results.rows);
 
-      setIsInterested(
-        results.rows.some(
-          (row) =>
-            row.post_id === post.post_id && row.user_id === session.user.id,
-        ),
-      );
+      await executeQuery({
+        query: `SELECT * FROM interest WHERE post_id = ?`,
+        values: [post.post_id],
+      }).then((results) => {
+        setInterests(results.rows);
+      });
     };
     fetchInterests();
   }, [post.post_id, post.user_id, session.user.id, isInterested]);
@@ -35,13 +36,12 @@ export default function PostCard({ post }) {
         values: [session.user.id],
       });
 
-      for (let i = 0; i < results.rows.length; i++) {
-        if (results.rows[i].follower_id === session.user.id) {
-          if (session.user.id === post.user_id) setIsYourPost(true);
-          if (results.rows[i].following_id === post.user_id)
-            setIsFollowing(true);
-        }
-      }
+      for (let i = 0; i < results.rows.length; i++)
+        if (
+          results.rows[i].follower_id === session.user.id &&
+          results.rows[i].following_id === post.user_id
+        )
+          setIsFollowing(true);
     };
 
     fetchFollows();

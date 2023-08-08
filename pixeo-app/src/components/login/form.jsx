@@ -10,7 +10,7 @@ const initialForm = {
   password: "",
 };
 
-export default function Form({ callbackUrl = "/homepage" }) {
+export default function Form({ callbackUrl = "/home" }) {
   const [form, setForm] = useState(initialForm);
 
   const handleChange = (e) => {
