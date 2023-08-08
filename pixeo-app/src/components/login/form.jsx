@@ -22,7 +22,6 @@ export default function Form({ callbackUrl = "/homepage" }) {
 
     const res = await signIn("credentials", {
       redirect: false,
-      callbackUrl: callbackUrl,
       email: form.email,
       password: form.password,
     });

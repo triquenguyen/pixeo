@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { findByEmail } from "../../../lib/user";
+import { findByEmail } from "@/lib/user";
 
 export default NextAuth({
   providers: [
@@ -18,26 +18,21 @@ export default NextAuth({
       async authorize(credentials) {
         const { email, password } = credentials;
 
-        if (!email || !password) {
+        if (!email || !password)
           throw new Error("Email and password are required");
-        }
 
         const results = await findByEmail(email);
 
         const userExists = results.rows[0];
 
-        if (!userExists) {
-          throw new Error("User not found");
-        }
+        if (!userExists) throw new Error("User not found");
 
         const passwordMatch = await bcrypt.compare(
           password,
           userExists.password,
         );
 
-        if (!passwordMatch) {
-          throw new Error("Password is incorrect");
-        }
+        if (!passwordMatch) throw new Error("Password is incorrect");
 
         return {
           id: userExists.id,
