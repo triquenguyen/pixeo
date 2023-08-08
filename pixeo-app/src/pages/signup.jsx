@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Form from "../components/signup/form";
+import Form from "@/components/signup/form";
 
 export default function Signup() {
   return (

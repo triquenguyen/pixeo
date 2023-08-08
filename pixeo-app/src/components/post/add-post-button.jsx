@@ -1,18 +1,25 @@
-import Image from "next/image";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowAddPost } from "../../redux/showAddPostSlice";
 
-export default function AddPostBtn() {
+export default function AddPostButton() {
   const dispatch = useDispatch();
   const show = useSelector((state) => state.showAddPost.showAddPost);
 
-  return(
+  return (
     <motion.div
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      onClick={() => show ? dispatch(setShowAddPost(false)) : dispatch(setShowAddPost(true))}>
-      <Image src="/add-image.png" alt="add post" height={50} width={50} className="w-8 h-8" />
+      onClick={() => dispatch(setShowAddPost(!show))}
+    >
+      <Image
+        alt="add post"
+        className="w-8 h-8"
+        height={50}
+        src="/add-image.png"
+        width={50}
+      />
     </motion.div>
-  )
+  );
 }

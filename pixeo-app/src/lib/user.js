@@ -1,4 +1,4 @@
-import { executeQuery } from "../config/db";
+import { executeQuery } from "@/config/db";
 
 export const findByEmail = async (email) => {
   return executeQuery({
@@ -15,14 +15,12 @@ export const getAllPosts = async () => {
                 JOIN user ON post.user_id = user.id
                 ORDER BY post.id DESC;`,
     values: [],
-  })
-}
+  });
+};
 
 export const addPost = async ({ title, body, userId, photo }) => {
   return executeQuery({
-    query:
-      "INSERT INTO post (title, body, photo, user_id) VALUES (?, ?, ?, ?)",
+    query: "INSERT INTO post (title, body, photo, user_id) VALUES (?, ?, ?, ?)",
     values: [String(title), String(body), photo, Number(userId)],
-  })
-}
-
+  });
+};

@@ -1,9 +1,9 @@
 import axios from "axios";
 import Link from "next/link";
+import Router from "next/router";
 import { useState } from "react";
 import Button from "../inputs/button";
 import Input from "../inputs/input";
-import Router from "next/router";
 
 const initialForm = {
   email: "",

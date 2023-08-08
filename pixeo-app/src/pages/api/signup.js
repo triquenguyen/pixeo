@@ -1,13 +1,13 @@
 import { hash } from "bcrypt";
-import { executeQuery } from "../../config/db";
-import { findByEmail } from "../../lib/user";
+import { executeQuery } from "@/config/db";
+import { findByEmail } from "@/lib/user";
 
 export default async function handler(req, res) {
-  const { firstName, lastName, email, password, confirmPassword } = await req.body;
+  const { firstName, lastName, email, password, confirmPassword } =
+    await req.body;
 
-  if (!firstName || !lastName || !email || !password || !confirmPassword) {
+  if (!firstName || !lastName || !email || !password || !confirmPassword)
     return res.status(400).json({ message: "Please fill in all fields" });
-  }
 
   const existingUser = await findByEmail(email);
 
