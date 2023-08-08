@@ -46,10 +46,13 @@ export default function Profile({ handleClose }) {
   });
 
   useEffect(() => {
-    setProfile((prev) => ({
-      ...prev,
-      ...profileData,
-    }));
+    setProfile({
+      firstname: profileData.firstname,
+      lastname: profileData.lastname,
+      email: profileData.email,
+      bio: profileData.bio,
+      location: profileData.location,
+    });
   }, [profileData]);
 
   const closeProfile = () => {

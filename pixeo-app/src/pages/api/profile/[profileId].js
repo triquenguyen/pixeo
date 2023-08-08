@@ -14,7 +14,7 @@ const handlePUT = async (req, res) => {
 
   const updateProfile = await executeQuery({
     query:
-      "UPDATE user SET firstname = ?, lastname = ?, email = ?, bio = ?, location = ?, profile_photo = ? WHERE id = ?",
+      "UPDATE user SET firstname = ?, lastname = ?, email = ?, bio = ?, location = ?, photo = ? WHERE id = ?",
     values: [
       firstname,
       lastname,

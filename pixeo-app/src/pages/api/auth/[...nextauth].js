@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { findByEmail } from "@/lib/user";
 
 export default NextAuth({
+  secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -37,7 +38,7 @@ export default NextAuth({
         return {
           id: userExists.id,
           email: userExists.email,
-          name: userExists.firstName + " " + userExists.lastName,
+          name: userExists.firstname + " " + userExists.lastname,
         };
       },
     }),

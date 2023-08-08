@@ -9,7 +9,7 @@ export default function Home() {
     <main className={`${inter.className} fixed inset-0 overflow-hidden`}>
       <Image
         alt="bg"
-        className="hidden fixed xl:block min-h-screen z-[-1]"
+        className="hidden fixed xl:block min-h-screen z-[-1] brightness-50"
         height={1080}
         src="/coverImage.png"
         width={1920}
@@ -20,7 +20,7 @@ export default function Home() {
             <Image alt="logo" height={37.5} src="/pixeo.svg" width={150} />
           </Link>
           <Link
-            className="px-3 py-2 text-xl bg-[#000] rounded-md text-white hover:scale-105 active:95"
+            className="px-3 py-2 text-xl bg-white font-medium rounded-md text-black hover:scale-105 active:95"
             href={"/login"}
           >
             Log In
@@ -31,14 +31,14 @@ export default function Home() {
           className="flex flex-col justify-center items-center"
           style={{ overflowY: "hidden", height: "80vh" }}
         >
-          <h1 className="text-5xl font-bold text-white py-8">
+          <h1 className="text-5xl font-bold text-white">
             Welcome to Pixeo! A digital Artwork sharing Library
           </h1>
-          <h1 className="text-3xl font-semibold text-white">
+          <h1 className="text-3xl font-semibold text-white mt-8">
             Lets share your creativity!
           </h1>
           <Link
-            className="mt-6 px-3 py-2 text-xl bg-[#000] rounded-md text-white hover:scale-105 active:95"
+            className="mt-16 px-3 py-2 text-xl bg-white font-medium rounded-md text-black hover:scale-105 active:95"
             href={"/signup"}
           >
             Get Started Here
