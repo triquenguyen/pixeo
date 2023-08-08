@@ -35,7 +35,6 @@ export default function Profile({ handleClose }) {
     `/api/profile/${session.user.id}`,
     (...args) => fetch(...args).then((res) => res.json()),
   );
-  const [preview, setPreview] = useState("");
 
   const [profile, setProfile] = useState({
     firstname: "",
@@ -56,10 +55,6 @@ export default function Profile({ handleClose }) {
     });
   }, [profileData]);
 
-  useEffect(() => {
-    if (profileData.photo) setPreview(profileData.photo);
-  }, []);
-
   const closeProfile = () => {
     dispatch(setShowProfile(false));
   };
@@ -67,27 +62,25 @@ export default function Profile({ handleClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const photo = e.target.photo.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(photo);
-    reader.onloadend = async () => {
-      const res = await axios.put(`/api/profile/${session.user.id}`, {
-        ...profile,
-        photo: reader.result,
-      });
-      if (res.status === 200) {
-        alert("Profile updated successfully");
-        mutate();
-        closeProfile();
-      }
-    };
+    const res = await axios.put(`/api/profile/${session.user.id}`, profile);
+    if (res.status === 200) {
+      alert("Profile updated successfully");
+      mutate();
+      closeProfile();
+    }
   };
 
   const handleChange = (e) =>
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    setProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleImageChange = (e) =>
-    setPreview(URL.createObjectURL(e.target.files[0]));
+  const handleImageChange = (e) => {
+    const photo = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(photo);
+    reader.onloadend = () => {
+      setProfile((prev) => ({ ...prev, photo: reader.result }));
+    };
+  };
 
   const handleSignout = () => signOut({ redirect: true, callbackUrl: "/" });
 
@@ -161,15 +154,14 @@ export default function Profile({ handleClose }) {
 
               <Input name="photo" type="file" onChange={handleImageChange} />
             </div>
-            {preview && (
+            <div className="w-60 h-60 rounded-2xl overflow-hidden relative">
               <Image
+                fill
                 alt="Preview"
-                className="rounded-2xl"
-                height={240}
-                src={preview}
-                width={240}
+                objectPosition="center"
+                src={profile?.photo || "/user-circle.svg"}
               />
-            )}
+            </div>
           </div>
           <div className="flex space-x-4">
             <Button type="submit">Update</Button>

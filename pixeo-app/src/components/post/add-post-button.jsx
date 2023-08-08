@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import { setShowAddPost } from "../../redux/showAddPostSlice";
+import { setShowAddPost } from "@/redux/showAddPostSlice";
 
 export default function AddPostButton() {
   const dispatch = useDispatch();

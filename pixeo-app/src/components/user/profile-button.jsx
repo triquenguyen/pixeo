@@ -24,10 +24,10 @@ export default function ProfileButton() {
     >
       <Image
         alt="User Photo"
-        className="rounded-full"
-        height={30}
-        src={profile?.photo || "../../user-circle.svg"}
-        width={30}
+        className="rounded-full w-8 h-8"
+        height={32}
+        src={profile?.photo || "/user-circle.svg"}
+        width={32}
       />
     </motion.div>
   );
