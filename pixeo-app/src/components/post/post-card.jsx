@@ -52,7 +52,7 @@ export default function PostCard({ post }) {
 
   const handleInterest = async (e) => {
     e.preventDefault();
-    const results = await executeQuery({
+    await executeQuery({
       query: `INSERT INTO interest (post_id, user_id) VALUES (?, ?)`,
       values: [post.post_id, session.user.id],
     });
@@ -61,7 +61,7 @@ export default function PostCard({ post }) {
 
   const handleUnInterest = async (e) => {
     e.preventDefault();
-    const results = await executeQuery({
+    await executeQuery({
       query: `DELETE FROM interest WHERE post_id = ? AND user_id = ?`,
       values: [post.post_id, session.user.id],
     });
@@ -70,7 +70,7 @@ export default function PostCard({ post }) {
 
   const handleFollow = async (e) => {
     e.preventDefault();
-    const results = await executeQuery({
+    await executeQuery({
       query: `INSERT INTO follow (follower_id, following_id) VALUES (?, ?)`,
       values: [session.user.id, post.user_id],
     });
@@ -79,7 +79,7 @@ export default function PostCard({ post }) {
 
   const handleUnfollow = async (e) => {
     e.preventDefault();
-    const results = await executeQuery({
+    await executeQuery({
       query: `DELETE FROM follow WHERE follower_id = ? AND following_id = ?`,
       values: [session.user.id, post.user_id],
     });
