@@ -1,28 +1,49 @@
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <main
-      className={`flex flex-col items-center justify-center space-y-8 min-h-screen p-4 ${inter.className}`}
-    >
-      <h1 className="text-6xl font-bold text-center">Welcome to Pixeo</h1>
-      <div className="flex space-x-4 items-center">
-        <Link
-          className="px-3 py-2 text-xl font-semibold bg-black rounded-md text-white hover:scale-105 active:95"
-          href="/signup"
+    <main className={`${inter.className} fixed inset-0 overflow-hidden`}>
+      <Image
+        alt="bg"
+        className="hidden fixed xl:block min-h-screen z-[-1]"
+        height={1080}
+        src="/coverImage.png"
+        width={1920}
+      />
+      <div className="px-12 py-10">
+        <div className="flex items-center px-4 py-2">
+          <Link className="mr-auto" href="/">
+            <Image alt="logo" height={37.5} src="/pixeo.svg" width={150} />
+          </Link>
+          <Link
+            className="px-3 py-2 text-xl bg-[#000] rounded-md text-white hover:scale-105 active:95"
+            href={"/login"}
+          >
+            Log In
+          </Link>
+        </div>
+
+        <div
+          className="flex flex-col justify-center items-center"
+          style={{ overflowY: "hidden", height: "80vh" }}
         >
-          Sign Up
-        </Link>
-        <span className="text-sm text-gray-500 font-semibold">or</span>
-        <Link
-          className="px-3 py-2 text-xl font-semibold bg-black rounded-md text-white hover:scale-105 active:95"
-          href="/login"
-        >
-          Log In
-        </Link>
+          <h1 className="text-5xl font-bold text-white py-8">
+            Welcome to Pixeo! A digital Artwork sharing Library
+          </h1>
+          <h1 className="text-3xl font-semibold text-white">
+            Lets share your creativity!
+          </h1>
+          <Link
+            className="mt-6 px-3 py-2 text-xl bg-[#000] rounded-md text-white hover:scale-105 active:95"
+            href={"/signup"}
+          >
+            Get Started Here
+          </Link>
+        </div>
       </div>
     </main>
   );
