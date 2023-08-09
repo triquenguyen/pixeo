@@ -17,6 +17,7 @@ const services = {
   user.id as user_id,
   user.photo_id as user_photo_id,
   sum(case WHEN interaction.type = 'like' then 1 else 0 end) as likes,
+  count(follow.id) as followers,
   group_concat(interaction.user_id) as liked_by,
   group_concat(interaction.id) as like_ids,
   group_concat(follow.follower_id) as followed_by,

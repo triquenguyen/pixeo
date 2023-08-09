@@ -10,7 +10,7 @@ const queryBuilder = (table) => {
         .join(", ")})`;
       const values = Object.values(payload);
 
-      await executeQuery({ query, values });
+      return executeQuery({ query, values });
     },
     updateById: async (id, payload) => {
       const entries = Object.entries(payload).filter(([_, value]) => value);
