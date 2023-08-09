@@ -8,10 +8,10 @@ export default function Home() {
   return (
     <main className={`${inter.className} fixed inset-0 overflow-hidden`}>
       <Image
-        alt="bg"
+        alt="coverImage"
         className="hidden fixed xl:block min-h-screen z-[-1] brightness-50"
         height={1080}
-        src="/coverImage.png"
+        src="/coverImage.jpg"
         width={1920}
       />
       <div className="px-12 py-10">
