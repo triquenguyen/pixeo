@@ -54,10 +54,15 @@ export default function PostCard({ post, mutate }) {
               }
               width={32}
             />
-            <h1>{post.full_name}</h1>
+            {post.user_id === session.user.id ? (
+              <h1 className="font-medium text-blue-700">You</h1>
+            ) : (
+              <h1>{post.full_name}</h1>
+            )}
           </div>
-          <div>
-            {post.user_id !== session.user.id && (
+          {post.user_id !== session.user.id && (
+            <div className="flex space-x-2 items-center">
+              <span>{post.followers}</span>
               <button onClick={handleFollow}>
                 <Image
                   alt={followId ? "Unfollow" : "Follow"}
@@ -66,8 +71,8 @@ export default function PostCard({ post, mutate }) {
                   width={25}
                 />
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
       <div>

@@ -27,7 +27,8 @@ FROM
   JOIN user ON post.user_id = user.id
   LEFT JOIN interaction ON post.id = interaction.post_id
   LEFT JOIN follow ON post.user_id = follow.following_id
-GROUP BY post.id, user.id`,
+GROUP BY post.id, user.id
+ORDER BY created_at DESC`,
       });
 
       return response;
