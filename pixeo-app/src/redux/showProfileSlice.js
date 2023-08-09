@@ -1,16 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  showProfile: false,
-};
+const initialState = false;
 
 export const showProfileSlice = createSlice({
   name: "showProfile",
   initialState,
   reducers: {
-    setShowProfile: (state, action) => {
-      state.showProfile = action.payload;
-    },
+    setShowProfile: (state, action) => (state = action.payload),
   },
 });
 

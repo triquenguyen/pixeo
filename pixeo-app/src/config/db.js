@@ -1,14 +1,24 @@
-import { connect } from "@planetscale/database";
+import mysql from "serverless-mysql";
 
-const config = {};
+const db = mysql({
+  config: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_DATABASE,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    insecureAuth: true,
+  },
+});
 
 export async function executeQuery({ query, values }) {
-  const conn = await connect(config);
-
   try {
-    const results = await conn.execute(query, values);
+    const results = await db.query(query, values);
+    await db.end();
     return results;
   } catch (error) {
-    console.log(error);
+    return { error };
   }
 }
+
+export default db;
