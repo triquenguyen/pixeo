@@ -7,11 +7,16 @@ import useSWR from "swr";
 import Input from "../inputs/input";
 import Backdrop from "../util/backdrop";
 import { setShowAddPost } from "@/redux/showAddPostSlice";
+import Select from "../inputs/select";
 
 const initialPost = {
   title: "",
   body: "",
-  userId: "",
+};
+
+const fields = {
+  title: "text",
+  body: "text",
 };
 
 const dropIn = {
@@ -34,25 +39,15 @@ const dropIn = {
 
 export default function AddPostBtn({ handleClose, id }) {
   const [post, setPost] = useState(initialPost);
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-  const { mutate } = useSWR("/api/posts");
-
+  const { mutate } = useSWR("/api/post");
+  const { data: tags, isLoading } = useSWR("/api/tag", (...args) =>
+    fetch(...args).then((res) => res.json())
+  );
   const closeAddPost = () => {
     dispatch(setShowAddPost(false));
   };
-
-  useEffect(() => {
-    setPost((prev) => ({
-      ...prev,
-      userId: Number(id),
-    }));
-
-    return () => {
-      setLoading(false);
-    };
-  }, [id, loading]);
 
   const handleChange = (e) => {
     setPost((prev) => ({
@@ -66,10 +61,18 @@ export default function AddPostBtn({ handleClose, id }) {
     const reader = new FileReader();
     reader.readAsDataURL(photo);
     reader.onloadend = async () => {
-      setPost((prev) => ({
-        ...prev,
-        photo: reader.result,
-      }));
+      axios
+        .post("/api/photo", {
+          filename: photo.name,
+          filetype: photo.type,
+          data: reader.result.replace(/^data:image\/\w+;base64,/, ""),
+        })
+        .then((res) => {
+          setPost((prev) => ({
+            ...prev,
+            photo_id: res.data.data.insertId,
+          }));
+        });
     };
   };
 
@@ -77,7 +80,10 @@ export default function AddPostBtn({ handleClose, id }) {
     e.preventDefault();
 
     try {
-      const res = await axios.post("/api/posts", post);
+      const res = await axios.post("/api/post", {
+        ...post,
+        user_id: id,
+      });
       if (res.status === 200) {
         mutate();
         alert("Post added successfully");
@@ -130,6 +136,14 @@ export default function AddPostBtn({ handleClose, id }) {
                 onChange={handleChange}
               />
 
+              <Select name="tag_id" value={post.tag_id} onChange={handleChange}>
+                {(tags?.data || []).map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}
+                  </option>
+                ))}
+              </Select>
+
               <input
                 id="blob"
                 name="photo"
@@ -140,7 +154,9 @@ export default function AddPostBtn({ handleClose, id }) {
             <Image
               alt="Preview"
               height={200}
-              src={post.photo || "/pixeo.svg"}
+              src={
+                post?.photo_id ? `/api/photo/${post.photo_id}` : "/pixeo.svg"
+              }
               width={200}
             />
           </div>

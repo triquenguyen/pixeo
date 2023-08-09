@@ -2,8 +2,12 @@ import useSWR from "swr";
 import PostCard from "./post-card";
 
 export default function PostFeed() {
-  const { data: posts, isLoading } = useSWR("/api/posts", (...args) =>
-    fetch(...args).then((res) => res.json()),
+  const {
+    data: posts,
+    isLoading,
+    mutate,
+  } = useSWR("/api/post", (...args) =>
+    fetch(...args).then((res) => res.json())
   );
 
   if (isLoading) {
@@ -12,8 +16,8 @@ export default function PostFeed() {
 
   return (
     <div className="flex flex-col mt-8 space-y-8 items-center">
-      {(posts || []).map((post) => (
-        <PostCard key={post.post_id} post={post} />
+      {(posts?.data || []).map((post) => (
+        <PostCard key={post.id} post={post} mutate={mutate} />
       ))}
     </div>
   );

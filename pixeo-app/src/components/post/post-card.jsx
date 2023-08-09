@@ -1,90 +1,42 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
-import { executeQuery } from "@/config/db";
+import { useCallback, useMemo } from "react";
+import axios from "axios";
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, mutate }) {
   const { data: session } = useSession();
-  const [isInterested, setIsInterested] = useState(false);
-  const [interests, setInterests] = useState([]);
-  const [isFollowing, setIsFollowing] = useState(false);
 
-  useEffect(() => {
-    const fetchInterests = async () => {
-      await executeQuery({
-        query: `SELECT * FROM interest WHERE user_id = ? AND post_id = ?`,
-        values: [session.user.id, post.post_id],
-      }).then((results) => {
-        if (results.rows.length > 0) setIsInterested(true);
-      });
+  const likeId = useMemo(() => {
+    const index =
+      post.liked_by?.split(",").indexOf(String(session.user.id)) ?? -1;
+    return index !== -1 ? post.like_ids.split(",")[index] : null;
+  }, [post.liked_by, session.user.id]);
+  const followId = useMemo(() => {
+    const index =
+      post.followed_by?.split(",").indexOf(String(session.user.id)) ?? -1;
+    return index !== -1 ? post.follow_ids.split(",")[index] : null;
+  }, [post.followed_by, session.user.id]);
 
-      await executeQuery({
-        query: `SELECT * FROM interest WHERE post_id = ?`,
-        values: [post.post_id],
-      }).then((results) => {
-        setInterests(results.rows);
-      });
-    };
-    fetchInterests();
-  }, [post.post_id, post.user_id, session.user.id, isInterested]);
+  const handleInteract = useCallback(() => {
+    (likeId
+      ? axios.delete(`/api/interaction/${likeId}`)
+      : axios.post(`/api/interaction`, {
+          user_id: session.user.id,
+          post_id: post.id,
+          type: "like",
+        })
+    ).then(() => mutate());
+  }, [likeId, post.id, session.user.id]);
 
-  useEffect(() => {
-    const fetchFollows = async () => {
-      const results = await executeQuery({
-        query: `SELECT * FROM follow WHERE follower_id = ? AND following_id = ?`,
-        values: [session.user.id, post.user_id],
-      });
-
-      if (results.rows.length > 0) setIsFollowing(true);
-    };
-
-    fetchFollows();
-  }, [post.user_id, session.user.id, isFollowing]);
-
-  const interestCount = useMemo(
-    () =>
-      interests.reduce((acc, interest) => {
-        if (interest.post_id === post.post_id) acc++;
-        return acc;
-      }, 0),
-    [interests, post.post_id],
-  );
-
-  const handleInterest = async (e) => {
-    e.preventDefault();
-    await executeQuery({
-      query: `INSERT INTO interest (post_id, user_id) VALUES (?, ?)`,
-      values: [post.post_id, session.user.id],
-    });
-    setIsInterested(true);
-  };
-
-  const handleUnInterest = async (e) => {
-    e.preventDefault();
-    await executeQuery({
-      query: `DELETE FROM interest WHERE post_id = ? AND user_id = ?`,
-      values: [post.post_id, session.user.id],
-    });
-    setIsInterested(false);
-  };
-
-  const handleFollow = async (e) => {
-    e.preventDefault();
-    await executeQuery({
-      query: `INSERT INTO follow (follower_id, following_id) VALUES (?, ?)`,
-      values: [session.user.id, post.user_id],
-    });
-    setIsFollowing(true);
-  };
-
-  const handleUnfollow = async (e) => {
-    e.preventDefault();
-    await executeQuery({
-      query: `DELETE FROM follow WHERE follower_id = ? AND following_id = ?`,
-      values: [session.user.id, post.user_id],
-    });
-    setIsFollowing(false);
-  };
+  const handleFollow = useCallback(() => {
+    (followId
+      ? axios.delete(`/api/follow/${followId}`)
+      : axios.post(`/api/follow`, {
+          follower_id: session.user.id,
+          following_id: post.user_id,
+        })
+    ).then(() => mutate());
+  }, [followId, post.user_id, session.user.id]);
 
   return (
     <div className="w-full max-w-xl rounded-xl border border-gray-200 shadow-xl">
@@ -95,29 +47,26 @@ export default function PostCard({ post }) {
               alt=""
               className="rounded-full w-8 h-8"
               height={32}
-              src={post.user_photo || "/user-circle.svg"}
+              src={
+                post.user_photo_id
+                  ? `/api/photo/${post.user_photo_id}`
+                  : "/user-circle.svg"
+              }
               width={32}
             />
-            <h1>
-              {post.firstname} {post.lastname}
-            </h1>
+            <h1>{post.full_name}</h1>
           </div>
           <div>
-            {post.user_id !== session.user.id &&
-              (isFollowing ? (
-                <button onClick={handleUnfollow}>
-                  <Image
-                    alt="Unfollow"
-                    height={25}
-                    src="/added.png"
-                    width={25}
-                  />
-                </button>
-              ) : (
-                <button onClick={handleFollow}>
-                  <Image alt="Follow" height={25} src="/add.png" width={25} />
-                </button>
-              ))}
+            {post.user_id !== session.user.id && (
+              <button onClick={handleFollow}>
+                <Image
+                  alt={followId ? "Unfollow" : "Follow"}
+                  height={25}
+                  src={followId ? "/added.png" : "/add.png"}
+                  width={25}
+                />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -127,7 +76,7 @@ export default function PostCard({ post }) {
             alt=""
             height={400}
             objectPosition="center"
-            src={post.post_photo}
+            src={`/api/photo/${post.photo_id}`}
             width={400}
           />
         </div>
@@ -137,27 +86,15 @@ export default function PostCard({ post }) {
             <p className="text-gray-500">{post.body}</p>
           </div>
           <div className="shrink-0">
-            {isInterested ? (
-              <button onClick={handleUnInterest}>
-                <Image
-                  alt="# Interested: "
-                  height={25}
-                  src="/interested.png"
-                  width={25}
-                />
-                <span>{interestCount}</span>
-              </button>
-            ) : (
-              <button onClick={handleInterest}>
-                <Image
-                  alt="# Interested:"
-                  height={25}
-                  src="/interest.png"
-                  width={25}
-                />
-                <span>{interestCount}</span>
-              </button>
-            )}
+            <button onClick={handleInteract}>
+              <Image
+                alt="# Interested:"
+                height={25}
+                src={likeId ? "/interested.png" : "/interest.png"}
+                width={25}
+              />
+              <span>{post.likes}</span>
+            </button>
           </div>
         </div>
       </div>
