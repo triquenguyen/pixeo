@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { findByEmail } from "@/lib/user";
+import services from "@/services";
 
 export default NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -22,23 +22,20 @@ export default NextAuth({
         if (!email || !password)
           throw new Error("Email and password are required");
 
-        const results = await findByEmail(email);
-
-        const userExists = results.rows[0];
-
-        if (!userExists) throw new Error("User not found");
+        const existingUser = await services.user.findByField("email", email);
+        if (!existingUser) throw new Error("User not found");
 
         const passwordMatch = await bcrypt.compare(
           password,
-          userExists.password,
+          existingUser.password
         );
-
         if (!passwordMatch) throw new Error("Password is incorrect");
 
         return {
-          id: userExists.id,
-          email: userExists.email,
-          name: userExists.firstname + " " + userExists.lastname,
+          id: existingUser.id,
+          email: existingUser.email,
+          name: existingUser.full_name,
+          photo: existingUser.photo,
         };
       },
     }),
@@ -55,6 +52,7 @@ export default NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.photo = user.photo;
       }
       return token;
     },
@@ -64,6 +62,7 @@ export default NextAuth({
         id: token.id,
         email: token.email,
         name: token.name,
+        photo: token.photo,
       };
       return session;
     },

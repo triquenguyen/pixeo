@@ -1,16 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  showAddPost: false,
-};
+const initialState = false;
 
 export const showAddPostSlice = createSlice({
   name: "showAddPost",
   initialState,
   reducers: {
-    setShowAddPost: (state, action) => {
-      state.showAddPost = action.payload;
-    },
+    setShowAddPost: (state, action) => (state = action.payload),
   },
 });
 

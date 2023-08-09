@@ -7,9 +7,8 @@ import { setShowProfile } from "@/redux/showProfileSlice";
 
 export default function ProfileButton() {
   const { data: session } = useSession();
-  const { data: profile } = useSWR(
-    `/api/profile/${session.user.id}`,
-    (...args) => fetch(...args).then((res) => res.json()),
+  const { data: profile } = useSWR(`/api/user/${session.user.id}`, (...args) =>
+    fetch(...args).then((res) => res.json())
   );
   const dispatch = useDispatch();
   const show = useSelector((state) => state.showProfile.showProfile);
@@ -26,7 +25,11 @@ export default function ProfileButton() {
         alt="User Photo"
         className="rounded-full w-8 h-8"
         height={32}
-        src={profile?.photo || "/user-circle.svg"}
+        src={
+          profile?.data?.photo_id
+            ? `/api/photo/${profile.data.photo_id}`
+            : "/user-circle.svg"
+        }
         width={32}
       />
     </motion.div>

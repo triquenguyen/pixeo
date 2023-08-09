@@ -10,6 +10,11 @@ const initialForm = {
   password: "",
 };
 
+const fields = {
+  email: "email",
+  password: "password",
+};
+
 export default function Form({ callbackUrl = "/home" }) {
   const [form, setForm] = useState(initialForm);
 
@@ -38,20 +43,19 @@ export default function Form({ callbackUrl = "/home" }) {
         className="flex flex-col items-center space-y-4"
         onSubmit={handleSubmit}
       >
-        <Input
-          name="email"
-          placeholder="Email"
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-        />
-        <Input
-          name="password"
-          placeholder="Password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-        />
+        {Object.entries(fields).map(([name, type]) => (
+          <Input
+            key={name}
+            name={name}
+            placeholder={name
+              .split("_")
+              .map((word) => word[0].toUpperCase() + word.slice(1))
+              .join(" ")}
+            type={type}
+            value={form[name]}
+            onChange={handleChange}
+          />
+        ))}
         <Button type="submit">Login</Button>
         <p className="text-gray-500 text-sm">
           Haven&apos;t created an account yet?{" "}

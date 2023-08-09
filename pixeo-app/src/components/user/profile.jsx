@@ -28,12 +28,20 @@ const dropIn = {
   },
 };
 
+const fields = {
+  first_name: "text",
+  last_name: "text",
+  email: "email",
+  bio: "text",
+  location: "text",
+};
+
 export default function Profile({ handleClose }) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const { data: profileData, mutate } = useSWR(
-    `/api/profile/${session.user.id}`,
-    (...args) => fetch(...args).then((res) => res.json()),
+    `/api/user/${session.user.id}`,
+    (...args) => fetch(...args).then((res) => res.json())
   );
 
   const [profile, setProfile] = useState({
@@ -46,12 +54,12 @@ export default function Profile({ handleClose }) {
 
   useEffect(() => {
     setProfile({
-      firstname: profileData.firstname,
-      lastname: profileData.lastname,
-      email: profileData.email,
-      bio: profileData.bio,
-      location: profileData.location,
-      photo: profileData.photo,
+      first_name: profileData.data.first_name,
+      last_name: profileData.data.last_name,
+      email: profileData.data.email,
+      bio: profileData.data.bio,
+      location: profileData.data.location,
+      photo_id: profileData.data.photo_id,
     });
   }, [profileData]);
 
@@ -62,7 +70,13 @@ export default function Profile({ handleClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await axios.put(`/api/profile/${session.user.id}`, profile);
+    const payload = profile;
+
+    for (let key in payload)
+      if (payload[key] === "" || payload[key] === profileData[key])
+        delete payload[key];
+
+    const res = await axios.patch(`/api/user/${session.user.id}`, profile);
     if (res.status === 200) {
       alert("Profile updated successfully");
       mutate();
@@ -77,8 +91,19 @@ export default function Profile({ handleClose }) {
     const photo = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(photo);
-    reader.onloadend = () => {
-      setProfile((prev) => ({ ...prev, photo: reader.result }));
+    reader.onloadend = async () => {
+      axios
+        .post("/api/photo", {
+          filename: photo.name,
+          filetype: photo.type,
+          data: reader.result.replace(/^data:image\/\w+;base64,/, ""),
+        })
+        .then((res) => {
+          setProfile((prev) => ({
+            ...prev,
+            photo_id: res.data.data.insertId,
+          }));
+        });
     };
   };
 
@@ -103,55 +128,25 @@ export default function Profile({ handleClose }) {
           onClick={handleClose}
         />
         <h1 className="text-2xl font-bold">Profile</h1>
-
         <form
           className="flex flex-col gap-[14px] items-center"
           onSubmit={handleSubmit}
         >
           <div className="flex gap-8 items-center">
             <div className="flex flex-col gap-[14px]">
-              <div className="flex space-x-4">
+              {Object.entries(fields).map(([name, type]) => (
                 <Input
-                  name="firstname"
-                  placeholder="First Name"
-                  type="text"
-                  value={profile.firstname}
+                  key={name}
+                  name={name}
+                  placeholder={name
+                    .split("_")
+                    .map((word) => word[0].toUpperCase() + word.slice(1))
+                    .join(" ")}
+                  type={name}
+                  value={profile[name]}
                   onChange={handleChange}
                 />
-
-                <Input
-                  name="lastname"
-                  placeholder="Last Name"
-                  type="text"
-                  value={profile.lastname}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <Input
-                name="email"
-                placeholder="Email"
-                type="text"
-                value={profile.email}
-                onChange={handleChange}
-              />
-
-              <Input
-                name="bio"
-                placeholder="Bio"
-                type="text"
-                value={profile.bio}
-                onChange={handleChange}
-              />
-
-              <Input
-                name="location"
-                placeholder="Location"
-                type="text"
-                value={profile.location}
-                onChange={handleChange}
-              />
-
+              ))}
               <Input name="photo" type="file" onChange={handleImageChange} />
             </div>
             <div className="w-60 h-60 rounded-2xl overflow-hidden relative">
@@ -159,7 +154,11 @@ export default function Profile({ handleClose }) {
                 fill
                 alt="Preview"
                 objectPosition="center"
-                src={profile?.photo || "/user-circle.svg"}
+                src={
+                  profile?.photo_id
+                    ? `/api/photo/${profile.photo_id}`
+                    : "/user-circle.svg"
+                }
               />
             </div>
           </div>

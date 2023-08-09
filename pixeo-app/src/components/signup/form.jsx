@@ -4,13 +4,22 @@ import Router from "next/router";
 import { useState } from "react";
 import Button from "../inputs/button";
 import Input from "../inputs/input";
+import snakeToTitle from "@/utils/snake-to-title";
 
 const initialForm = {
   email: "",
-  firstName: "",
-  lastName: "",
+  first_name: "",
+  last_name: "",
   password: "",
-  confirmPassword: "",
+  confirm_password: "",
+};
+
+const fields = {
+  email: "email",
+  first_name: "text",
+  last_name: "text",
+  password: "password",
+  confirm_password: "password",
 };
 
 export default function Form() {
@@ -23,16 +32,24 @@ export default function Form() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (form.password !== form.confirm_password)
+      return alert("Passwords do not match");
+
     try {
-      const res = await axios.post("/api/signup", form);
-      if (res.status === 200) {
+      const res = await axios.post("/api/user", {
+        email: form.email,
+        first_name: form.first_name,
+        last_name: form.last_name,
+        password: form.password,
+      });
+
+      if (res.status === 200)
         alert("Sign up successful, please login to continue");
-      }
 
       setForm(initialForm);
       Router.push("/login");
     } catch (error) {
-      alert(error.response.data.message);
+      alert(error.response.data.error);
     }
   };
 
@@ -43,43 +60,16 @@ export default function Form() {
         className="flex flex-col items-center space-y-4"
         onSubmit={handleSubmit}
       >
-        <div className="flex space-x-4">
+        {Object.entries(fields).map(([name, type]) => (
           <Input
-            name="firstName"
-            placeholder="First Name"
-            type="text"
-            value={form.firstName}
+            key={name}
+            name={name}
+            placeholder={snakeToTitle(name)}
+            type={type}
+            value={form[name]}
             onChange={handleChange}
           />
-          <Input
-            name="lastName"
-            placeholder="Last Name"
-            type="text"
-            value={form.lastName}
-            onChange={handleChange}
-          />
-        </div>
-        <Input
-          name="email"
-          placeholder="Email"
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-        />
-        <Input
-          name="password"
-          placeholder="Password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-        />
-        <Input
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          type="password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-        />
+        ))}
         <Button type="submit">Sign Up</Button>
         <p className="text-gray-500 text-sm">
           Already have an account?{" "}

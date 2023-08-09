@@ -11,8 +11,8 @@ import { setShowProfile } from "@/redux/showProfileSlice";
 
 export default function Home() {
   const router = useRouter();
-  const showAddPost = useSelector((state) => state.showAddPost.showAddPost);
-  const showProfile = useSelector((state) => state.showProfile.showProfile);
+  const showAddPost = useSelector((state) => state.showAddPost);
+  const showProfile = useSelector((state) => state.showProfile);
 
   const dispatch = useDispatch();
   const closeAddPost = () => dispatch(setShowAddPost(false));
